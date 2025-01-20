@@ -1,5 +1,6 @@
 package com.easy.query.console.demo;
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -7,6 +8,8 @@ import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConve
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.zaxxer.hikari.HikariDataSource;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -31,11 +34,17 @@ public class Main {
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())//设置方言语法等为mysql的
                 .build();
 //        //创建代理模式api查询
-//        EasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
-//        List<Topic> topics = easyProxyQuery.queryable(TopicProxy.createTable())
-//                .where(o -> o.eq(o.t().id(), "123").like(o.t().name(), "您好"))
-//                .orderByAsc(o -> o.columns(o.t().createTime(), o.t().id()))
-//                .select(s -> s.columns(s.t().no(), s.t().id(), s.t().name()))
-//                .toList();
+        DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        List<Topic> topics = entityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("123");
+                    t.name().like("您好");
+                })
+                .orderBy(t -> {
+                    t.createTime().asc();
+                    t.id().desc();
+                })
+                .select(t -> t.FETCHER.id().no().name())
+                .toList();
     }
 }

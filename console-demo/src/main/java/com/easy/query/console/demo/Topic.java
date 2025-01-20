@@ -1,9 +1,11 @@
 package com.easy.query.console.demo;
 
+import com.easy.query.console.demo.proxy.TopicProxy;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_topic")
 @EntityProxy
-public class Topic {
+public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;
